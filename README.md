@@ -4,7 +4,7 @@
 
 <p align="center">
   <img src="docs/assets/banner.png" width="820"
-       alt="awesome-gamedev-agent-skills — game-dev skills for your AI coding agent. Build any game, in any engine. 66 skills and a router across 10 engines, installed with one command. Sample game screenshots: a cozy farming sim, a metroidvania, a low-poly 3D island, an atmospheric platformer, and a top-down dungeon crawler.">
+       alt="awesome-gamedev-agent-skills — game-dev skills for your AI coding agent. Build any game, in any engine. 67 skills and a router across 10 engines, installed with one command. Sample game screenshots: a cozy farming sim, a metroidvania, a low-poly 3D island, an atmospheric platformer, and a top-down dungeon crawler.">
 </p>
 
 **Game-development expertise for AI coding agents — install once, and a router loads the
@@ -16,7 +16,7 @@ right skill for whatever you're building.**
 [![Last commit](https://img.shields.io/github/last-commit/gamedev-skills/awesome-gamedev-agent-skills)](https://github.com/gamedev-skills/awesome-gamedev-agent-skills/commits/main)
 
 [Agent Skills](docs/SKILL-FORMAT.md) are small capability files an AI agent loads only when it
-needs them. This repo gives your agent **66 game-dev skills** and a **router** that picks the
+needs them. This repo gives your agent **67 game-dev skills** and a **router** that picks the
 right ones for you. You describe what you're building; the agent loads the matching engine and
 task skills before it writes code.
 
@@ -37,7 +37,7 @@ task skills before it writes code.
 ## Quick start
 
 **One command, any agent.** The [`skills`](https://www.npmjs.com/package/skills) CLI detects the
-coding agent you already use and installs the router plus all 66 skills into the right place:
+coding agent you already use and installs the router plus all 67 skills into the right place:
 
 ```bash
 npx skills add gamedev-skills/awesome-gamedev-agent-skills
@@ -108,7 +108,7 @@ engine), while disciplines, genres, and workflows are additive on top.
 
 ## Catalog
 
-66 skills across 8 categories — each links to its `SKILL.md` below.
+67 skills across 8 categories — each links to its `SKILL.md` below.
 
 ### Engines
 
@@ -214,12 +214,13 @@ primitives.
 | [`survival-crafting`](skills/genres/survival-crafting/SKILL.md) | Resource gathering, inventory, crafting, needs, base building |
 | [`puzzle`](skills/genres/puzzle/SKILL.md) | Grid/board state, match/rule resolution, undo, level progression |
 
-### Workflows — 4 ([`skills/workflows/`](skills/workflows/))
+### Workflows — 5 ([`skills/workflows/`](skills/workflows/))
 
 | Skill | Scope |
 |-------|-------|
 | [`game-jam`](skills/workflows/game-jam/SKILL.md) | Scope/plan/execute a jam build under time limits; submit |
 | [`prototype-fast`](skills/workflows/prototype-fast/SKILL.md) | Greybox a playable vertical slice quickly; cut scope; validate the fun |
+| [`agentic-game-studio`](skills/workflows/agentic-game-studio/SKILL.md) | Govern a multi-agent engine/asset/MCP slice through playable evidence and independent review |
 | [`steam-publish`](skills/workflows/steam-publish/SKILL.md) | Steamworks onboarding: app/depots, store page, builds, release checklist |
 | [`itch-publish`](skills/workflows/itch-publish/SKILL.md) | Publish/update on itch.io: project page, channels, `butler` uploads |
 
@@ -292,12 +293,27 @@ func _physics_process(delta: float) -> void:
 ## Repository layout
 
 ```
-skills/        66 specialized skills, grouped by engine / discipline / genre / workflow
+skills/        67 specialized skills, grouped by engine / discipline / genre / workflow
 router/        the master router skill (+ references/)
-docs/          authoring standard, installation, compatibility
+catalog/       dated source/MCP landscapes, report index, and workflow-budget forecasts
+contracts/     Structural schemas for admission, transitions, approvals, and asset readiness
+docs/          authoring standard, installation, compatibility, studio architecture
 templates/     SKILL.md template
-scripts/       validate-skills.py and tooling
+scripts/       skill/catalog validators and a non-production reference policy core
 ```
+
+## Studio architecture extension
+
+This fork adds a governed production layer without replacing the portable engine skills:
+
+- [2026 landscape and local maturity review](docs/STATE-OF-THE-ART-2026.md)
+- [machine-readable Starlight report index](catalog/starlight-report-index-2026.json)
+- [MCP architecture for engine, DCC, media, QA, and deployment tools](docs/MCP-GAMEDEV-ARCHITECTURE.md)
+- [Starlight / GenCreator / Arcanea open-core topology](docs/STARLIGHT-OPEN-CORE-STUDIO.md)
+- [Game-class model and token budgets](docs/GAME-CLASS-BUDGETS.md)
+- [`agentic-game-studio`](skills/workflows/agentic-game-studio/SKILL.md) workflow
+
+Validate the extension with `python scripts/validate-studio-catalog.py`. Run the adversarial tests for the explicitly non-production, process-local reference policy with `python scripts/test_studio_policy.py`.
 
 ## Contributing
 
@@ -307,6 +323,8 @@ rubric before merge:
 
 ```bash
 python scripts/validate-skills.py
+python scripts/validate-studio-catalog.py
+python scripts/test_studio_policy.py
 ```
 
 ## License

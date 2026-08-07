@@ -1,0 +1,19 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://gamedev-skills.dev/contracts/approval-receipt.schema.json",
+  "title": "Artifact-bound release approval receipt",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["approver_id", "run_id", "artifact_hash", "actor", "issued_at", "expires_at", "nonce", "signature"],
+  "properties": {
+    "approver_id": {"type": "string", "minLength": 1},
+    "run_id": {"type": "string", "minLength": 1},
+    "artifact_hash": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
+    "actor": {"type": "string", "minLength": 1},
+    "issued_at": {"type": "integer", "minimum": 0},
+    "expires_at": {"type": "integer", "minimum": 1},
+    "nonce": {"type": "string", "minLength": 1},
+    "signature": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+  },
+  "description": "Production signing keys must remain outside the agent process. Runtime verification binds the receipt to the exact run, artifact and actor and enforces freshness and revocation."
+}

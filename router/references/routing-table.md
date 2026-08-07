@@ -110,6 +110,7 @@ a real folder at `skills/<category>/<name>/SKILL.md`. Trigger words (`says:`) an
 |----------------|------------------------------|
 | `game-jam` | game jam, 48-hour game, Ludum Dare / GMTK, jam submission |
 | `prototype-fast` | prototype fast, vertical slice, MVP game, greybox |
+| `agentic-game-studio` | multi-agent game studio, engine or DCC MCP, generated-asset pipeline, token/media budget, independent game release gate |
 | `steam-publish` | publish on Steam, Steamworks, store page, depot/build upload; `steam_appid.txt` |
 | `itch-publish` | publish on itch, itch.io page, `butler push`, upload build; `.itch.toml` |
 
