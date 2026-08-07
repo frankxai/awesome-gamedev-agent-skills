@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://gamedev-skills.dev/contracts/tool-admission.schema.json",
   "title": "Game studio tool admission policy",
-  "description": "Structural policy contract. Runtime must reject revoked policies, bind the exact distribution/version/transport/action tier, and use a trusted external authorization verifier. Policy authenticity and OS sandboxing are outside this schema.",
+  "description": "Structural policy contract. Runtime rejects revoked policies, binds the exact distribution/version/transport/action tier, and freezes a trusted authorization verifier during executor bootstrap. Policy authenticity, bootstrap isolation, and OS sandboxing remain deployment responsibilities.",
   "type": "object",
   "additionalProperties": false,
   "required": ["policy_version", "server_id", "server_version", "distribution_sha256", "transport", "auth_required", "project_root", "allowed_tools", "allowed_egress_hosts", "action_tier"],

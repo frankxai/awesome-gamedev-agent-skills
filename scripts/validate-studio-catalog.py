@@ -10,7 +10,7 @@ import urllib.error
 import urllib.request
 from pathlib import Path
 
-from studio_policy import ApprovalAuthority, ASSET_FIELDS, POLICY_FIELDS, TRANSITION_FIELDS
+from studio_policy import ApprovalVerifier, ASSET_FIELDS, POLICY_FIELDS, TRANSITION_FIELDS
 
 ROOT = Path(__file__).resolve().parents[1]
 HTTPS = re.compile(r"^https://")
@@ -29,7 +29,7 @@ RUNTIME_CONTRACT_FIELDS = {
     "tool-admission.schema.json": (POLICY_FIELDS, POLICY_FIELDS - {"revoked"}),
     "workflow-transition.schema.json": (TRANSITION_FIELDS, TRANSITION_FIELDS - {"approval_receipt"}),
     "asset-readiness.schema.json": (ASSET_FIELDS, ASSET_FIELDS),
-    "approval-receipt.schema.json": (ApprovalAuthority.FIELDS, ApprovalAuthority.FIELDS),
+    "approval-receipt.schema.json": (ApprovalVerifier.FIELDS, ApprovalVerifier.FIELDS),
 }
 
 

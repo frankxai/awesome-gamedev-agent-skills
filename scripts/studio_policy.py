@@ -83,16 +83,49 @@ def _contained(root: str, target: str) -> bool:
 AuthorizationVerifier = Callable[[dict[str, Any], dict[str, Any], int], bool]
 
 
-def admit_tool_call(
-    policy: dict[str, Any], call: dict[str, Any], now_epoch: int,
-    authorization_verifier: AuthorizationVerifier | None = None,
-) -> dict[str, Any]:
-    """Admit one bounded call or reject before execution.
+def _nonempty_string(value: Any, field: str) -> None:
+    if not isinstance(value, str) or not value:
+        raise PolicyViolation(f"{field} must be a non-empty string")
 
-    Trust-sensitive auth fails closed unless a caller-owned trusted verifier adapter
-    is provided. This function does not authenticate the policy document itself.
-    """
+
+def _integer(value: Any, field: str, minimum: int = 0) -> None:
+    if isinstance(value, bool) or not isinstance(value, int) or value < minimum:
+        raise PolicyViolation(f"{field} must be an integer >= {minimum}")
+
+
+def _number(value: Any, field: str, minimum: float = 0.0) -> None:
+    if isinstance(value, bool) or not isinstance(value, (int, float)) or value < minimum:
+        raise PolicyViolation(f"{field} must be a number >= {minimum}")
+
+
+def _unique_string_list(value: Any, field: str, nonempty: bool = False) -> None:
+    if not isinstance(value, list) or (nonempty and not value) or not all(isinstance(item, str) for item in value) or len(value) != len(set(value)):
+        raise PolicyViolation(f"{field} must be a {'non-empty ' if nonempty else ''}unique string list")
+
+
+def _validate_policy(policy: dict[str, Any]) -> None:
     _require_exact_fields(policy, POLICY_FIELDS, POLICY_FIELDS - {"revoked"}, "policy")
+    for field in ("policy_version", "server_id", "server_version", "project_root"):
+        _nonempty_string(policy[field], field)
+    if any(character not in "abcdefghijklmnopqrstuvwxyz0123456789-" for character in policy["server_id"]):
+        raise PolicyViolation("server_id must match ^[a-z0-9-]+$")
+    _require_sha256(policy["distribution_sha256"], "distribution_sha256")
+    if policy["transport"] not in {"stdio", "http", "sse"}:
+        raise PolicyViolation("transport is invalid")
+    if not isinstance(policy["auth_required"], bool) or not isinstance(policy.get("revoked", False), bool):
+        raise PolicyViolation("auth_required and revoked must be booleans")
+    _unique_string_list(policy["allowed_tools"], "allowed_tools", nonempty=True)
+    _unique_string_list(policy["allowed_egress_hosts"], "allowed_egress_hosts")
+    if policy["action_tier"] not in {"read", "write", "execute", "deploy"}:
+        raise PolicyViolation("action_tier is invalid")
+
+
+def _admit_tool_call(
+    policy: dict[str, Any], call: dict[str, Any], now_epoch: int,
+    authorization_verifier: AuthorizationVerifier | None,
+) -> dict[str, Any]:
+    """Internal operation path. Trust adapters are fixed at executor bootstrap."""
+    _validate_policy(policy)
     if policy.get("revoked", False):
         raise PolicyViolation("policy is revoked")
     _require_sha256(policy["distribution_sha256"], "distribution_sha256")
@@ -101,6 +134,12 @@ def admit_tool_call(
         "project_root", "target_path", "egress_host", "actor", "run_id", "auth_expires_at", "authorization_id",
     }
     _require_exact_fields(call, required_call, required_call, "call")
+    for field in ("server_id", "server_version", "distribution_sha256", "transport", "action_tier", "tool", "project_root", "target_path", "actor", "run_id", "authorization_id"):
+        _nonempty_string(call[field], field)
+    if call["egress_host"] is not None and not isinstance(call["egress_host"], str):
+        raise PolicyViolation("egress_host must be a string or null")
+    _integer(call["auth_expires_at"], "auth_expires_at")
+    _require_sha256(call["distribution_sha256"], "distribution_sha256")
     for field in ("server_id", "server_version", "distribution_sha256", "transport", "action_tier", "project_root"):
         if call[field] != policy[field]:
             raise PolicyViolation(f"unapproved {field}")
@@ -121,9 +160,41 @@ def admit_tool_call(
     return admitted
 
 
+class AdmissionExecutor:
+    """Trusted-bootstrap boundary; operation callers submit calls but cannot replace trust adapters."""
+    def __init__(self, policy: dict[str, Any], authorization_verifier: AuthorizationVerifier | None) -> None:
+        _validate_policy(policy)
+        self._policy = deepcopy(policy)
+        self._authorization_verifier = authorization_verifier
+
+    def admit(self, call: dict[str, Any], now_epoch: int) -> dict[str, Any]:
+        return _admit_tool_call(self._policy, call, now_epoch, self._authorization_verifier)
+
+
 def validate_3d_asset(asset: dict[str, Any]) -> dict[str, Any]:
     """Reject a generated 3D asset until it is demonstrably engine-ready."""
     _require_exact_fields(asset, ASSET_FIELDS, ASSET_FIELDS, "3d asset")
+    for field in ("asset_id", "source_url", "license", "up_axis", "engine_import_hash"):
+        _nonempty_string(asset[field], field)
+    if not asset["source_url"].startswith("https://"):
+        raise PolicyViolation("source_url must be https")
+    _number(asset["scale_meters"], "scale_meters")
+    if asset["scale_meters"] <= 0:
+        raise PolicyViolation("3d asset scale must be positive")
+    _integer(asset["poly_count"], "poly_count")
+    _integer(asset["poly_cap"], "poly_cap", minimum=1)
+    _integer(asset["uv_sets"], "uv_sets", minimum=1)
+    _unique_string_list(asset["pbr_maps"], "pbr_maps", nonempty=True)
+    if not set(asset["pbr_maps"]).issubset({"base_color", "normal", "roughness", "metallic", "ao", "emissive"}):
+        raise PolicyViolation("pbr_maps contains an unsupported map")
+    if not isinstance(asset["lods"], list) or not asset["lods"]:
+        raise PolicyViolation("lods must be a non-empty integer list")
+    for lod in asset["lods"]:
+        _integer(lod, "lod", minimum=0)
+    if not isinstance(asset["collision"], bool):
+        raise PolicyViolation("collision must be a boolean")
+    for field in ("runtime_memory_mb", "memory_cap_mb", "frame_time_ms", "frame_time_cap_ms"):
+        _number(asset[field], field)
     if asset["license"] in {"unknown", "NOASSERTION", ""}:
         raise PolicyViolation("3d asset license is not cleared")
     if not isinstance(asset["scale_meters"], (int, float)) or asset["scale_meters"] <= 0:
@@ -176,27 +247,33 @@ class BudgetLedger:
             return {"decision": "ALLOW", "run_id": self.run_id, "budget_class": self.budget_class, "used": dict(self.used), "ceilings": dict(self.ceilings)}
 
 
-class ApprovalAuthority:
-    """HMAC verifier for artifact/run-bound approval receipts.
+class ApprovalVerifier:
+    """Trusted-bootstrap verifier for artifact/run-bound approval receipts.
 
-    Production signing keys must live outside the agent process. `issue()` exists only
-    for deterministic tests and offline examples.
+    Production signing keys and verifier construction must live outside the agent/request
+    process. This class intentionally exposes no signing method.
     """
     FIELDS = {"approver_id", "run_id", "artifact_hash", "actor", "issued_at", "expires_at", "nonce", "signature"}
 
     def __init__(self, approver_secrets: dict[str, bytes], revoked_approvers: set[str] | None = None) -> None:
+        if not approver_secrets or not all(isinstance(key, str) and key and isinstance(secret, bytes) and secret for key, secret in approver_secrets.items()):
+            raise PolicyViolation("trusted bootstrap requires non-empty approver IDs and byte secrets")
         self._secrets = dict(approver_secrets)
         self._revoked = set(revoked_approvers or set())
 
-    def issue(self, approver_id: str, run_id: str, artifact_hash: str, actor: str, issued_at: int, expires_at: int, nonce: str) -> dict[str, Any]:
-        if approver_id not in self._secrets or approver_id in self._revoked:
-            raise PolicyViolation("approver is unavailable or revoked")
-        payload = {"approver_id": approver_id, "run_id": run_id, "artifact_hash": artifact_hash, "actor": actor, "issued_at": issued_at, "expires_at": expires_at, "nonce": nonce}
-        payload["signature"] = hmac.new(self._secrets[approver_id], _canonical_bytes(payload), hashlib.sha256).hexdigest()
-        return payload
-
     def verify(self, approval: dict[str, Any], transition: dict[str, Any], now_epoch: int) -> None:
         _require_exact_fields(approval, self.FIELDS, self.FIELDS, "approval")
+        for field in ("approver_id", "run_id", "actor", "nonce", "signature"):
+            _nonempty_string(approval[field], field)
+        _require_sha256(approval["artifact_hash"], "artifact_hash")
+        _integer(approval["issued_at"], "issued_at")
+        _integer(approval["expires_at"], "expires_at", minimum=1)
+        if len(approval["signature"]) != 64:
+            raise PolicyViolation("approval signature must be 64 hex characters")
+        try:
+            int(approval["signature"], 16)
+        except ValueError as exc:
+            raise PolicyViolation("approval signature must be hexadecimal") from exc
         approver = approval["approver_id"]
         if approver not in self._secrets or approver in self._revoked:
             raise PolicyViolation("approver is unknown or revoked")
@@ -213,17 +290,24 @@ class ApprovalAuthority:
 
 class WorkflowGate:
     """Process-local transition checker; production must persist state and idempotency."""
-    def __init__(self, trusted_verifiers: set[str], approval_authority: ApprovalAuthority | None = None) -> None:
-        if not trusted_verifiers:
-            raise PolicyViolation("at least one trusted verifier is required")
+    def __init__(self, trusted_verifiers: set[str], approval_verifier: ApprovalVerifier | None = None) -> None:
+        if not trusted_verifiers or not all(isinstance(value, str) and value for value in trusted_verifiers):
+            raise PolicyViolation("at least one non-empty trusted verifier is required")
         self._trusted_verifiers = set(trusted_verifiers)
-        self._approval_authority = approval_authority
+        self._approval_verifier = approval_verifier
         self._seen: set[str] = set()
         self._lock = threading.Lock()
 
     def advance(self, receipt: dict[str, Any], now_epoch: int) -> dict[str, Any]:
         required = TRANSITION_FIELDS - {"approval_receipt"}
         _require_exact_fields(receipt, TRANSITION_FIELDS, required, "transition")
+        for field in ("run_id", "from_state", "to_state", "actor", "verifier", "artifact_hash", "idempotency_key", "policy_version", "recovery"):
+            _nonempty_string(receipt[field], field)
+        if len(receipt["idempotency_key"]) < 8:
+            raise PolicyViolation("idempotency_key must contain at least 8 characters")
+        _integer(receipt["timestamp"], "timestamp")
+        if "approval_receipt" in receipt and not isinstance(receipt["approval_receipt"], dict):
+            raise PolicyViolation("approval_receipt must be an object")
         if receipt["to_state"] not in ALLOWED_TRANSITIONS.get(receipt["from_state"], set()):
             raise PolicyViolation("invalid state transition")
         if receipt["actor"] == receipt["verifier"] or receipt["verifier"] not in self._trusted_verifiers:
@@ -239,9 +323,9 @@ class WorkflowGate:
         for value in evidence:
             _require_sha256(value, "evidence_hash")
         if receipt["to_state"] == "RELEASE":
-            if self._approval_authority is None or "approval_receipt" not in receipt:
+            if self._approval_verifier is None or "approval_receipt" not in receipt:
                 raise PolicyViolation("release requires a trusted approval verifier and signed receipt")
-            self._approval_authority.verify(receipt["approval_receipt"], receipt, now_epoch)
+            self._approval_verifier.verify(receipt["approval_receipt"], receipt, now_epoch)
         elif "approval_receipt" in receipt:
             raise PolicyViolation("approval receipt is only valid for RELEASE")
         key = receipt["idempotency_key"]
