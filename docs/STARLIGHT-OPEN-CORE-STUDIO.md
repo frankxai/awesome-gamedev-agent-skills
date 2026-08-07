@@ -38,6 +38,8 @@ Add narrative, economy, backend, security or liveops specialists only when the s
 
 Each transition requires a receipt. A text report without a playable or validated artifact cannot advance `PROTOTYPE` or later.
 
+The reference contracts are `contracts/tool-admission.schema.json`, `contracts/workflow-transition.schema.json`, and `contracts/asset-readiness.schema.json`. `scripts/studio_policy.py` enforces the core invariants in tests: exact server/version/tool admission, path and egress containment, expired-auth denial, hash-bound evidence, independent verification, idempotency, human release approval, and atomic hard-budget HOLD behavior. Production still requires an OS-level sandbox, persistent ledger, real engine adapters, and recovery orchestration.
+
 ## Adoption plan
 
 1. Keep this fork close to upstream; contribute general improvements upstream.

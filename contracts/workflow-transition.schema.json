@@ -1,0 +1,21 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://gamedev-skills.dev/contracts/workflow-transition.schema.json",
+  "title": "Game studio workflow transition receipt",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["from_state", "to_state", "actor", "verifier", "artifact_hash", "evidence_hashes", "idempotency_key", "policy_version", "timestamp"],
+  "properties": {
+    "from_state": {"type": "string"},
+    "to_state": {"type": "string"},
+    "actor": {"type": "string", "minLength": 1},
+    "verifier": {"type": "string", "minLength": 1},
+    "artifact_hash": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
+    "evidence_hashes": {"type": "array", "minItems": 1, "items": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"}},
+    "idempotency_key": {"type": "string", "minLength": 8},
+    "policy_version": {"type": "string", "minLength": 1},
+    "timestamp": {"type": "string", "format": "date-time"},
+    "human_approved": {"type": "boolean"},
+    "recovery": {"enum": ["none", "retry", "rollback", "compensate"]}
+  }
+}

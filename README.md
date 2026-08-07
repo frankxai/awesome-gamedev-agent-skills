@@ -296,6 +296,7 @@ func _physics_process(delta: float) -> void:
 skills/        67 specialized skills, grouped by engine / discipline / genre / workflow
 router/        the master router skill (+ references/)
 catalog/       source, MCP, and workflow-budget registries
+contracts/     JSON Schemas for tool admission and workflow receipts
 docs/          authoring standard, installation, compatibility, studio architecture
 templates/     SKILL.md template
 scripts/       skill and studio-catalog validators
@@ -312,7 +313,7 @@ This fork adds a governed production layer without replacing the portable engine
 - [Game-class model and token budgets](docs/GAME-CLASS-BUDGETS.md)
 - [`agentic-game-studio`](skills/workflows/agentic-game-studio/SKILL.md) workflow
 
-Validate the extension with `python scripts/validate-studio-catalog.py`.
+Validate the extension with `python scripts/validate-studio-catalog.py`. Run the fail-closed reference-policy tests with `python scripts/test_studio_policy.py`.
 
 ## Contributing
 
@@ -323,6 +324,7 @@ rubric before merge:
 ```bash
 python scripts/validate-skills.py
 python scripts/validate-studio-catalog.py
+python scripts/test_studio_policy.py
 ```
 
 ## License

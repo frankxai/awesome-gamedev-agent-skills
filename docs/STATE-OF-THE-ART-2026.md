@@ -9,7 +9,7 @@ The Starlight estate is broad but uneven: the 2026-06-26 capability audit counte
 ## What is genuinely strong locally
 
 - `frankx-app-forge` has a coherent 19-agent/12-skill team, staged gates, fresh-context review, vertical slices, ethical monetization and explicit machine-zone discipline.
-- Higgsfield skills are operational rather than decorative: model discovery, job submission, retries, asset manifests and handoff contracts. The game-generation skill covers browser-game images, sprites, textures, audio and 3D, then hands build/deploy to Higgsfield Websites.
+- Higgsfield skills are operational rather than decorative: model discovery, job submission, retries, asset manifests and handoff contracts. The current `higgsfield-websites` skill documents browser-game creation and references related game-art workflows.
 - ComfyUI and TouchDesigner skills include executable scripts, health checks, API contracts and hard-won pitfalls.
 - The internal MCP registry already models trust, action tier, human gates, version policy and per-host availability.
 
@@ -20,7 +20,7 @@ The Starlight estate is broad but uneven: the 2026-06-26 capability audit counte
 3. **Skill hygiene debt is large.** The older lint report is dominated by packaging and duplication problems; high skill count overstates ready-to-route capability.
 4. **Claims exceed evidence in some legacy skills.** “AAA” labels and premium assertions often lack runnable evaluators, sample projects or benchmark receipts.
 5. **MCP is a trust boundary.** Editor and DCC servers can run code or mutate binary assets. Popularity does not make them safe.
-6. **Vendor catalogs are volatile.** During this audit, `higgsfield-game-generation` remained indexed on skills.sh with 26,585 installs while its directory disappeared from the vendor repository's current `main` after a new push. Pin reviewed revisions; never route production work from a floating marketplace entry.
+6. **Vendor catalogs are volatile.** During this audit, a previously indexed Higgsfield game-generation path disappeared from the vendor repository's current `main`; the source catalog now points to the current `higgsfield-websites` primary file instead. Pin reviewed revisions; never route production work from a floating marketplace entry.
 
 ## Maturity rubric
 

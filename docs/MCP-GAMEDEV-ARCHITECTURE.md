@@ -1,8 +1,10 @@
 # MCP architecture for game development
 
-## Principle
+## Principle and implementation boundary
 
 MCP servers are adapters, not the studio brain. The orchestrator owns state, gates and budgets; skills provide domain knowledge; MCP/CLI tools perform bounded actions; validators and humans decide promotion.
+
+`catalog/mcp-gamedev-2026.json` is a **curated landscape**, not an executable admission registry. The standard-library reference core in `scripts/studio_policy.py` demonstrates fail-closed tool admission, project-root containment, hash-bound receipts, maker/checker separation and concurrency-safe budget ceilings. It is a contract testbed, not a production sandbox or MCP gateway.
 
 ```text
 Brief/GDD -> router -> planner -> bounded makers -> engine/DCC adapters
@@ -53,4 +55,4 @@ A URL to a mesh is not a game asset. Require: source and license; coordinate sys
 - Never expose credentials in prompts, repos or model context.
 - Builders cannot self-approve release gates.
 
-Machine-readable server notes: `catalog/mcp-gamedev-2026.json`.
+Machine-readable landscape notes: `catalog/mcp-gamedev-2026.json`. Admission and transition schemas live in `contracts/`.

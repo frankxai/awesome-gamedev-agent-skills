@@ -1,0 +1,26 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://gamedev-skills.dev/contracts/asset-readiness.schema.json",
+  "title": "Engine-ready 3D asset evidence",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["asset_id", "source_url", "license", "scale_meters", "up_axis", "poly_count", "poly_cap", "uv_sets", "pbr_maps", "lods", "collision", "engine_import_hash", "runtime_memory_mb", "memory_cap_mb", "frame_time_ms", "frame_time_cap_ms"],
+  "properties": {
+    "asset_id": {"type": "string", "minLength": 1},
+    "source_url": {"type": "string", "format": "uri"},
+    "license": {"type": "string", "not": {"enum": ["unknown", "NOASSERTION", ""]}},
+    "scale_meters": {"type": "number", "exclusiveMinimum": 0},
+    "up_axis": {"enum": ["Y", "Z"]},
+    "poly_count": {"type": "integer", "minimum": 0},
+    "poly_cap": {"type": "integer", "minimum": 1},
+    "uv_sets": {"type": "integer", "minimum": 1},
+    "pbr_maps": {"type": "array", "minItems": 4, "uniqueItems": true, "items": {"enum": ["base_color", "normal", "roughness", "metallic", "ao", "emissive"]}},
+    "lods": {"type": "array", "minItems": 1, "items": {"type": "integer", "minimum": 0}},
+    "collision": {"const": true},
+    "engine_import_hash": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
+    "runtime_memory_mb": {"type": "number", "minimum": 0},
+    "memory_cap_mb": {"type": "number", "minimum": 0},
+    "frame_time_ms": {"type": "number", "minimum": 0},
+    "frame_time_cap_ms": {"type": "number", "minimum": 0}
+  }
+}

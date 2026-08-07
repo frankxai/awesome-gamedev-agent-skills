@@ -30,7 +30,7 @@ is the dispatcher). Copy it in alongside the others so the agent can route reque
 
 The [`skills` CLI](https://www.npmjs.com/package/skills) is the package manager for the Agent
 Skills ecosystem. It detects the agents installed on your machine and copies the skills (the
-router plus all 66) into each one's skills directory — no clone required:
+router plus all 67) into each one's skills directory — no clone required:
 
 ```bash
 # install into whatever agent(s) you have
