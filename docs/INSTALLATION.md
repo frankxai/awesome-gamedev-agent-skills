@@ -59,7 +59,7 @@ so you can install it without cloning or copying files. Add the marketplace once
 claude plugin marketplace add gamedev-skills/awesome-gamedev-agent-skills
 ```
 
-Easiest — install the router and all 66 skills in one command:
+Easiest — install the router and all 67 skills in one command:
 
 ```bash
 claude plugin install gamedev@awesome-gamedev-agent-skills

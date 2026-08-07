@@ -1,0 +1,27 @@
+{
+  "schema": "awesomeGamedev.mcpRegistry.v1",
+  "observed_at": "2026-08-07",
+  "risk_rule": "Any editor/DCC execute-code tool is a write-capable code-execution boundary. Run local, pin versions, scope project paths, record tool calls, and require visual/runtime verification.",
+  "servers": [
+    {"id":"unity-coplay","stage":"engine-authoring","url":"https://github.com/CoplayDev/unity-mcp","status":"evaluate","capabilities":["scene","assets","scripts","tests","play-mode"],"risk":"high-write"},
+    {"id":"unity-cli-official","stage":"engine-authoring","url":"https://github.com/Unity-Technologies/skills","status":"prefer-when-available","capabilities":["editor-discovery","live-commands","build","test","mcp-config"],"risk":"high-write"},
+    {"id":"godot-coding-solo","stage":"engine-authoring","url":"https://github.com/Coding-Solo/godot-mcp","status":"evaluate","capabilities":["launch","run","debug-output"],"risk":"medium-write"},
+    {"id":"godot-hi-godot","stage":"engine-authoring","url":"https://github.com/hi-godot/godot-ai","status":"evaluate","capabilities":["editor","ai-tools"],"risk":"high-write"},
+    {"id":"unreal-chongdashu","stage":"engine-authoring","url":"https://github.com/chongdashu/unreal-mcp","status":"watch","capabilities":["editor-control","blueprints"],"risk":"license-and-freshness"},
+    {"id":"unreal-chir24","stage":"engine-authoring","url":"https://github.com/ChiR24/Unreal_mcp","status":"evaluate","capabilities":["native-automation-bridge","editor-control"],"risk":"high-write"},
+    {"id":"blender","stage":"asset-authoring","url":"https://github.com/ahujasid/blender-mcp","status":"evaluate","capabilities":["modeling","scene","materials","render","python"],"risk":"arbitrary-code"},
+    {"id":"touchdesigner-twozero","stage":"realtime-vfx","url":"https://404zero.com/twozero","status":"available-local-skill","capabilities":["operators","glsl","audio-reactive","capture","profiling"],"risk":"localhost-unauthenticated-code-execution"},
+    {"id":"comfyui-rest-ws","stage":"asset-generation","url":"https://docs.comfy.org/development/comfyui-server/comms_overview","status":"available-local-skill","capabilities":["image","video","audio","3d-workflows","batch"],"risk":"untrusted-custom-nodes"},
+    {"id":"higgsfield","stage":"asset-generation","url":"https://github.com/higgsfield-ai/skills","status":"installed","capabilities":["image","video","audio","3d","browser-game-assets"],"risk":"paid-jobs-and-publication"},
+    {"id":"meshy","stage":"asset-generation","url":"https://github.com/meshy-dev/meshy-3d-agent","status":"evaluate","capabilities":["text-to-3d","image-to-3d"],"risk":"topology-and-rights-review"},
+    {"id":"visual-intelligence","stage":"asset-governance","url":"https://github.com/frankxai/visual-intelligence","status":"internal-installed","capabilities":["provenance","qa-evidence","publication-record"],"risk":"internal-data-boundary"},
+    {"id":"playwright","stage":"qa","url":"https://playwright.dev/docs/getting-started-mcp","status":"installed","capabilities":["browser-playtest","screenshots","a11y","input"],"risk":"logged-in-session-scope"},
+    {"id":"github","stage":"gitops","url":"https://github.com/github/github-mcp-server","status":"evaluate","capabilities":["issues","prs","actions","code-search"],"risk":"permissions-and-merge"},
+    {"id":"context7","stage":"research","url":"https://github.com/upstash/context7","status":"evaluate","capabilities":["current-library-docs"],"risk":"community-source"},
+    {"id":"sentry","stage":"liveops","url":"https://docs.sentry.io/product/sentry-mcp/","status":"candidate","capabilities":["errors","traces","release-health"],"risk":"production-data"},
+    {"id":"supabase","stage":"backend","url":"https://supabase.com/docs/guides/getting-started/mcp","status":"candidate","capabilities":["database","auth","edge-functions"],"risk":"production-data-and-migrations"},
+    {"id":"rivet","stage":"multiplayer","url":"https://github.com/rivet-dev/skills/tree/main/multiplayer-game","status":"skill-not-mcp","capabilities":["matchmaking","actors","realtime","persistence"],"risk":"vendor-runtime"},
+    {"id":"railway","stage":"deployment","url":"https://github.com/railwayapp/railway-mcp-server","status":"installed","capabilities":["services","deployments","logs"],"risk":"production-and-cost"},
+    {"id":"vercel","stage":"deployment","url":"https://vercel.com/docs/mcp/vercel-mcp","status":"installed","capabilities":["preview","logs","domains"],"risk":"production-promotion"}
+  ]
+}
