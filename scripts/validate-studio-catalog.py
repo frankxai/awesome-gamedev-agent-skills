@@ -10,7 +10,9 @@ import urllib.error
 import urllib.request
 from pathlib import Path
 
-ROOT = Path(__file__).resolve().parent.parent
+from studio_policy import ApprovalAuthority, ASSET_FIELDS, POLICY_FIELDS, TRANSITION_FIELDS
+
+ROOT = Path(__file__).resolve().parents[1]
 HTTPS = re.compile(r"^https://")
 COUNT = 67
 MCP_STATUSES = {"reference", "candidate", "evaluate", "watch"}
@@ -22,7 +24,13 @@ FILES = {
     "workflow-budgets-2026.json": ("classes", {"id", "example", "duration", "text_tokens", "asset_jobs", "models", "skills", "mcp", "gates"}),
     "starlight-report-index-2026.json": ("reports", {"id", "date", "scope", "strength", "limitation", "source", "game_studio_use"}),
 }
-CONTRACTS = {"tool-admission.schema.json", "workflow-transition.schema.json", "asset-readiness.schema.json"}
+CONTRACTS = {"tool-admission.schema.json", "workflow-transition.schema.json", "asset-readiness.schema.json", "approval-receipt.schema.json"}
+RUNTIME_CONTRACT_FIELDS = {
+    "tool-admission.schema.json": (POLICY_FIELDS, POLICY_FIELDS - {"revoked"}),
+    "workflow-transition.schema.json": (TRANSITION_FIELDS, TRANSITION_FIELDS - {"approval_receipt"}),
+    "asset-readiness.schema.json": (ASSET_FIELDS, ASSET_FIELDS),
+    "approval-receipt.schema.json": (ApprovalAuthority.FIELDS, ApprovalAuthority.FIELDS),
+}
 
 
 def load_json(path: Path, errors: list[str]):
@@ -63,6 +71,13 @@ def validate_contracts(errors: list[str]) -> None:
         required = data.get("required")
         if not isinstance(required, list) or not required:
             errors.append(f"{filename}: required must be non-empty")
+            continue
+        runtime_properties, runtime_required = RUNTIME_CONTRACT_FIELDS[filename]
+        schema_properties = set(data.get("properties", {}))
+        if schema_properties != runtime_properties:
+            errors.append(f"{filename}: schema/runtime property drift: schema={sorted(schema_properties)} runtime={sorted(runtime_properties)}")
+        if set(required) != runtime_required:
+            errors.append(f"{filename}: schema/runtime required-field drift: schema={sorted(required)} runtime={sorted(runtime_required)}")
 
 
 def check_url(item_id: str, url: str, errors: list[str]) -> None:
@@ -131,7 +146,7 @@ def main() -> int:
             print(f"  - {error}")
         return 1
     suffix = " with network source checks" if args.network else ""
-    print(f"Validated 4 catalogs, {COUNT}-skill package parity, and 3 contracts{suffix}.")
+    print(f"Validated 4 catalogs, {COUNT}-skill package parity, and 4 contracts{suffix}.")
     return 0
 
 if __name__ == "__main__":

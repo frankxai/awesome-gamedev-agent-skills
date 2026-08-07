@@ -38,7 +38,7 @@ Add narrative, economy, backend, security or liveops specialists only when the s
 
 Each transition requires a receipt. A text report without a playable or validated artifact cannot advance `PROTOTYPE` or later.
 
-The reference contracts are `contracts/tool-admission.schema.json`, `contracts/workflow-transition.schema.json`, and `contracts/asset-readiness.schema.json`. `scripts/studio_policy.py` enforces the core invariants in tests: exact server/version/tool admission, path and egress containment, expired-auth denial, hash-bound evidence, independent verification, idempotency, human release approval, and atomic hard-budget HOLD behavior. Production still requires an OS-level sandbox, persistent ledger, real engine adapters, and recovery orchestration.
+The structural reference contracts cover tool admission, workflow transitions, signed approvals, and asset readiness. `scripts/studio_policy.py` is explicitly a non-production, process-local example that tests fail-closed behavior: revocation and exact distribution/tool admission, trusted authorization adapters, path and egress containment, hash-bound evidence, trusted maker/checker separation, artifact/run-bound HMAC approval verification, idempotency, and atomic budget `HOLD`. It does **not** claim to provide an OS sandbox, authenticated policy distribution, persistent workflow/budget ledger, live engine adapters, or recovery orchestration; those remain production admission requirements.
 
 ## Adoption plan
 

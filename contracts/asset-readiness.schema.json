@@ -2,6 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://gamedev-skills.dev/contracts/asset-readiness.schema.json",
   "title": "Engine-ready 3D asset evidence",
+  "description": "Structural contract. Runtime additionally enforces cross-field polygon, memory, and frame-time caps and rejects uncleared licenses.",
   "type": "object",
   "additionalProperties": false,
   "required": ["asset_id", "source_url", "license", "scale_meters", "up_axis", "poly_count", "poly_cap", "uv_sets", "pbr_maps", "lods", "collision", "engine_import_hash", "runtime_memory_mb", "memory_cap_mb", "frame_time_ms", "frame_time_cap_ms"],
