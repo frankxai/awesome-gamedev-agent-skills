@@ -40,6 +40,12 @@ task skills before it writes code.
 coding agent you already use and installs the router plus all 67 skills into the right place:
 
 ```bash
+npx skills add gamedev-skills/awesome-gamedev-agent-skills --list
+```
+
+Do **not** bulk-install all 67 skills into a production agent. Preview with `--list`, then install the **router plus one engine**. Scan packs with [NVIDIA SkillSpector](https://github.com/NVIDIA/SkillSpector) first. This frankxai repo tracks upstream [gamedev-skills/awesome-gamedev-agent-skills](https://github.com/gamedev-skills/awesome-gamedev-agent-skills).
+
+```bash
 npx skills add gamedev-skills/awesome-gamedev-agent-skills
 ```
 
