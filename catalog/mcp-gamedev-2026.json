@@ -1,6 +1,6 @@
 {
   "schema": "awesomeGamedev.mcpLandscape.v1",
-  "observed_at": "2026-08-07",
+  "observed_at": "2026-09-02",
   "risk_rule": "This is a non-enforcing reference landscape, not an admission registry. Any editor/DCC execute-code tool is a write-capable code-execution boundary. A separate policy executor must pin versions, scope project paths, emit receipts, and require runtime verification.",
   "servers": [
     {"id":"unity-coplay","stage":"engine-authoring","url":"https://github.com/CoplayDev/unity-mcp","status":"evaluate","capabilities":["scene","assets","scripts","tests","play-mode"],"risk":"high-write"},
@@ -19,7 +19,7 @@
     {"id":"context7","stage":"research","url":"https://github.com/upstash/context7","status":"evaluate","capabilities":["current-library-docs"],"risk":"community-source"},
     {"id":"sentry","stage":"liveops","url":"https://docs.sentry.io/product/sentry-mcp/","status":"candidate","capabilities":["errors","traces","release-health"],"risk":"production-data"},
     {"id":"supabase","stage":"backend","url":"https://supabase.com/docs/guides/getting-started/mcp","status":"candidate","capabilities":["database","auth","edge-functions"],"risk":"production-data-and-migrations"},
-    {"id":"rivet","stage":"multiplayer","url":"https://github.com/rivet-dev/skills/tree/main/multiplayer-game","status":"reference","capabilities":["matchmaking","actors","realtime","persistence"],"risk":"vendor-runtime; skill, not MCP"},
+    {"id":"rivet","stage":"multiplayer","url":"https://github.com/rivet-dev/skills/tree/main/rivet-actors","status":"reference","capabilities":["actors","realtime","state","persistence","multiplayer-game-learning-reference"],"risk":"vendor-runtime; generated skill, not MCP"},
     {"id":"railway","stage":"deployment","url":"https://github.com/railwayapp/railway-mcp-server","status":"evaluate","capabilities":["services","deployments","logs"],"risk":"production-and-cost"},
     {"id":"vercel","stage":"deployment","url":"https://vercel.com/docs/mcp/vercel-mcp","status":"evaluate","capabilities":["preview","logs","domains"],"risk":"production-promotion"}
   ]
